@@ -2,17 +2,24 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
+    <AssemblyName>Sylnode</AssemblyName>
     <TargetFramework>net9.0-windows</TargetFramework>
     <Nullable>enable</Nullable>
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
     <PublishSingleFile>true</PublishSingleFile>
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
     <SelfContained>true</SelfContained>
     <ApplicationIcon>coffee.ico</ApplicationIcon>
     <InvariantGlobalization>true</InvariantGlobalization>
     <EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
+    <Product>Sylnode</Product>
+    <Copyright>© 2025, Pierre ARNAUD, CH-1400 Yverdon-les-Bains, Switzerland</Copyright>
+    <Version>1.0.0.2505</Version>
+    <AssemblyVersion>$(Version)</AssemblyVersion>
+    <FileVersion>$(Version)</FileVersion>
+    <AssemblyInformationalVersion>$(Version)</AssemblyInformationalVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -42,14 +49,4 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
-
-  <PropertyGroup>
-    <!-- Assembly information -->
-    <AssemblyTitle>Sylnode App</AssemblyTitle>
-    <AssemblyDescription>Sample Windows Forms Application</AssemblyDescription>
-    <AssemblyCompany>Sylnode</AssemblyCompany>
-    <AssemblyProduct>Sylnode App</AssemblyProduct>
-    <AssemblyVersion>1.0.0.0</AssemblyVersion>
-    <FileVersion>1.0.0.0</FileVersion>
-  </PropertyGroup>
 </Project>
