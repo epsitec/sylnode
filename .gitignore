@@ -8,9 +8,6 @@
 *.sln.docstates
 .vs/
 
-# Zou helpers
-*.zou
-
 # Build results
 
 [Dd]ebug/
@@ -20,6 +17,7 @@ build/
 [Bb]in/
 [Oo]bj/
 [Tt]mp/
+distrib/
 
 # Enable "build/" folder in the NuGet Packages folder since NuGet packages use it for MSBuild targets
 !packages/*/build/
