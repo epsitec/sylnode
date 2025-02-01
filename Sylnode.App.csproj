@@ -6,8 +6,15 @@
     <Nullable>enable</Nullable>
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <PublishSingleFile>true</PublishSingleFile>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <SelfContained>true</SelfContained>
+    <ApplicationIcon>coffee.ico</ApplicationIcon>
+    <InvariantGlobalization>true</InvariantGlobalization>
+    <EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
   </PropertyGroup>
-  
+
   <ItemGroup>
     <PackageReference Include="Microsoft.Windows.Compatibility" Version="9.0.1" />
   </ItemGroup>
