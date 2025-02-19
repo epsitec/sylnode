@@ -249,7 +249,7 @@ public partial class MainForm : Form
         this.pictureBox.Font = new Font ("Segoe UI", 14, FontStyle.Bold);
         this.pictureBox.Dock = DockStyle.Fill;
         this.pictureBox.SizeMode = PictureBoxSizeMode.Zoom; // Set SizeMode to Zoom
-        this.pictureBox.BackColor = Color.White;
+        this.pictureBox.BackColor = Color.Black; // Set background color to black
         this.Controls.Add (this.pictureBox);
 
         this.Icon = this.coffeeIcon;
