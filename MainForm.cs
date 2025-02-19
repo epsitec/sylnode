@@ -1,4 +1,4 @@
-﻿//	Copyright © 2025, EPSITEC SA, CH-1400 Yverdon-les-Bains, Switzerland
+//	Copyright © 2025, EPSITEC SA, CH-1400 Yverdon-les-Bains, Switzerland
 //	Author: Pierre ARNAUD, Maintainer: Pierre ARNAUD
 
 using Microsoft.Win32;
@@ -140,7 +140,7 @@ public partial class MainForm : Form
     private void StopCapturing()
     {
         this.SetActiveIcon (this.coffeeIcon);
-        this.pictureBox.Text = "Sylnode - la recopie d'écran a été désactivée";
+        this.pictureBox.Text = "Sylnode - écran gelé";
         this.pictureBox.Invalidate ();
         
         this.captureTimer.Stop ();
@@ -248,7 +248,7 @@ public partial class MainForm : Form
         this.pictureBox.Text = "Sylnode - Presser Ctrl-§ pour activer la recopie d'écran";
         this.pictureBox.Font = new Font ("Segoe UI", 14, FontStyle.Bold);
         this.pictureBox.Dock = DockStyle.Fill;
-        this.pictureBox.SizeMode = PictureBoxSizeMode.StretchImage;
+        this.pictureBox.SizeMode = PictureBoxSizeMode.Zoom; // Set SizeMode to Zoom
         this.pictureBox.BackColor = Color.White;
         this.Controls.Add (this.pictureBox);
 
