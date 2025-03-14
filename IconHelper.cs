@@ -1,4 +1,4 @@
-﻿//	Copyright © 2025, EPSITEC SA, CH-1400 Yverdon-les-Bains, Switzerland
+//	Copyright © 2025, EPSITEC SA, CH-1400 Yverdon-les-Bains, Switzerland
 //	Author: Pierre ARNAUD, Maintainer: Pierre ARNAUD
 
 using System.Drawing.Drawing2D;
@@ -8,7 +8,7 @@ namespace Sylnode.App;
 
 public class IconHelper
 {
-    public static Icon CreateBadgeIcon(Icon baseIcon)
+    public static Icon CreateBadgeIcon(Icon baseIcon, Color color)
     {
         // Convert the base icon to a bitmap.
         Bitmap baseBitmap = baseIcon.ToBitmap ();
@@ -33,7 +33,43 @@ public class IconHelper
             Rectangle badgeRect = new Rectangle (badgeX, badgeY, badgeDiameter, badgeDiameter);
 
             // Draw the badge (a red circle).
-            using (Brush badgeBrush = new SolidBrush (Color.Red))
+            using (Brush badgeBrush = new SolidBrush (color))
+            {
+                g.FillEllipse (badgeBrush, badgeRect);
+            }
+        }
+
+        // Convert the composite bitmap back to an icon.
+        // Note: GetHicon() returns a handle that should be destroyed later.
+        Icon badgeIcon = Icon.FromHandle (composite.GetHicon ());
+
+        // Optionally, you can copy the icon to a new Icon instance to manage its lifetime.
+        // For simplicity, we'll return badgeIcon. In a production app, consider proper cleanup.
+        return badgeIcon;
+    }
+
+    public static Icon CreateDiskIcon(Color color)
+    {
+        int dx = 64;
+        int dy = 64;
+        // Create a new bitmap to draw on.
+        Bitmap composite = new Bitmap (dx, dy);
+
+        using (Graphics g = Graphics.FromImage (composite))
+        {
+            // High quality drawing settings.
+            g.SmoothingMode = SmoothingMode.AntiAlias;
+            g.TextRenderingHint = TextRenderingHint.ClearTypeGridFit;
+
+            // Determine badge size and position.
+            // For example, a circle in the top-right corner.
+            int badgeDiameter = Math.Min (dx, dy) / 2;
+            int badgeX = dx - badgeDiameter - 2;
+            int badgeY = dy - badgeDiameter - 2;
+            Rectangle badgeRect = new Rectangle (badgeX, badgeY, badgeDiameter, badgeDiameter);
+
+            // Draw the badge (a red circle).
+            using (Brush badgeBrush = new SolidBrush (color))
             {
                 g.FillEllipse (badgeBrush, badgeRect);
             }

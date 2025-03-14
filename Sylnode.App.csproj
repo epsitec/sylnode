@@ -16,10 +16,11 @@
     <EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
     <Product>Sylnode</Product>
     <Copyright>© 2025, Pierre ARNAUD, CH-1400 Yverdon-les-Bains, Switzerland</Copyright>
-    <Version>1.1.0.2508</Version>
+    <Version>1.2.0.2511</Version>
     <AssemblyVersion>$(Version)</AssemblyVersion>
     <FileVersion>$(Version)</FileVersion>
     <AssemblyInformationalVersion>$(Version)</AssemblyInformationalVersion>
+    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
   </PropertyGroup>
 
   <ItemGroup>
@@ -48,5 +49,9 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="distrib\" />
   </ItemGroup>
 </Project>

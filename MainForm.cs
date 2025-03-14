@@ -3,7 +3,6 @@
 
 using Microsoft.Win32;
 
-using System.Diagnostics;
 using System.Runtime.InteropServices;
 
 namespace Sylnode.App;
@@ -13,9 +12,15 @@ public partial class MainForm : Form
     public MainForm()
     {
         this.UpdateScreens ();
+
+        this.taskbarManager = TaskbarOverlayManager.Instance;
+
         this.pictureBox = new CaptionPictureBox ();
         this.captureTimer = this.CreateTimer ();
         this.coffeeIcon = MainForm.CreateCoffeeIcon ();
+
+        this.activeIcon = IconHelper.CreateDiskIcon (Color.Green);
+        this.freezeIcon = IconHelper.CreateDiskIcon (Color.Red);
 
         this.InitializeComponent ();
         this.ConfigureFormForSecondMonitor ();
@@ -24,12 +29,37 @@ public partial class MainForm : Form
         SystemEvents.DisplaySettingsChanged += this.HandleSystemEventsDisplaySettingsChanged;
 
         this.trayIcon = this.CreateTrayIcon ();
+
+        //  Postpone code execution to ensure the window has been created.
+        var startupTimer = new System.Windows.Forms.Timer ();
+
+        startupTimer.Interval = 1000;
+        startupTimer.Tick += (sender, e) =>
+        {
+            this.ExecuteAfterWindowCreated ();
+            startupTimer.Stop ();
+            startupTimer.Dispose ();
+        };
+
+        startupTimer.Start ();
+    }
+
+    private void ExecuteAfterWindowCreated()
+    {
+        this.SetActiveIcon (this.activeIcon, "Live", true);
     }
 
     /*************************************************************************/
-    public void SetActiveIcon(Icon icon)
+
+    public void SetActiveIcon(Icon icon, string status, bool visible)
     {
-        this.Icon = icon;
+        //this.Icon = icon;
+
+        //this.trayIcon.Icon = icon;
+        this.trayIcon.Text = $"Sylnode {status}";
+        this.trayIcon.Visible = visible;
+
+        this.taskbarManager.SetOverlayIcon (this, icon, status);
     }
 
     /*************************************************************************/
@@ -71,15 +101,12 @@ public partial class MainForm : Form
     }
 
     /*************************************************************************/
-    
+
     private void CaptureAndDisplayScreen()
     {
-        var primaryScreen = Screen.PrimaryScreen
-            ?? throw new InvalidOperationException ();
-        
-        var bounds = primaryScreen.Bounds;
+        var bounds = this.sourceScreen.Bounds;
         var bitmap = new Bitmap (bounds.Width, bounds.Height);
-        
+
         using (var graphics = Graphics.FromImage (bitmap))
         {
             graphics.CopyFromScreen (bounds.Location, Point.Empty, bounds.Size);
@@ -129,20 +156,20 @@ public partial class MainForm : Form
 
     private void StartCapturing()
     {
-        this.SetActiveIcon (IconHelper.CreateBadgeIcon (this.coffeeIcon));
+        this.SetActiveIcon (this.activeIcon, "Live", true);
         this.pictureBox.Text = "";
         this.pictureBox.DisplayImage = true;
         this.pictureBox.Invalidate ();
-        
+
         this.captureTimer.Start ();
     }
 
     private void StopCapturing()
     {
-        this.SetActiveIcon (this.coffeeIcon);
+        this.SetActiveIcon (this.freezeIcon, "Gelé", false);
         this.pictureBox.Text = "Sylnode - écran gelé";
         this.pictureBox.Invalidate ();
-        
+
         this.captureTimer.Stop ();
     }
 
@@ -150,10 +177,10 @@ public partial class MainForm : Form
     {
         Screen[] screens = Screen.AllScreens;
         this.hasMutipleScreens = (screens.Length > 1);
+        this.sourceScreen = Screen.PrimaryScreen
+            ?? throw new InvalidOperationException ("No screens found");
         this.targetScreen = this.hasMutipleScreens
-            ? screens[1]
-            : Screen.PrimaryScreen
-                ?? throw new InvalidOperationException ("No screens found");
+            ? screens[1] : this.sourceScreen;
     }
 
     private void DisplayImage(Image image)
@@ -200,11 +227,14 @@ public partial class MainForm : Form
         bool success = Win32.RegisterHotKey (
             this.Handle, 1,
             Win32.MOD_CONTROL, (int)Keys.Oem2);
+
         if (!success)
         {
             int errorCode = Marshal.GetLastWin32Error ();
             MessageBox.Show ($"Failed to register hotkey. Error code: {errorCode}");
         }
+
+        this.ToggleCapturing ();
     }
 
     private void HandleCaptureTimerTick(object? sender, EventArgs e)
@@ -218,7 +248,7 @@ public partial class MainForm : Form
     }
 
     /*************************************************************************/
-    
+
     protected override void WndProc(ref Message m)
     {
         if (m.Msg == Win32.WM_HOTKEY)
@@ -283,11 +313,15 @@ public partial class MainForm : Form
     #endregion
 
     /*************************************************************************/
-    
+
     private bool hasMutipleScreens;
+    private Screen sourceScreen = default!;
     private Screen targetScreen = default!;
     private readonly Icon coffeeIcon;
+    private readonly Icon activeIcon;
+    private readonly Icon freezeIcon;
     private readonly CaptionPictureBox pictureBox;
     private readonly System.Windows.Forms.Timer captureTimer;
     private readonly NotifyIcon trayIcon;
+    private readonly TaskbarOverlayManager taskbarManager;
 }
