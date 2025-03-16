@@ -4,6 +4,7 @@
 using Microsoft.Win32;
 
 using System.Runtime.InteropServices;
+using System.Text;
 
 namespace Sylnode.App;
 
@@ -40,8 +41,14 @@ public partial class MainForm : Form
             startupTimer.Stop ();
             startupTimer.Dispose ();
         };
-
         startupTimer.Start ();
+
+        this.powerPointMonitorTimer = new System.Windows.Forms.Timer
+        {
+            Interval = 500  // Check every half second
+        };
+        this.powerPointMonitorTimer.Tick += this.HandlePowerPointMonitorTimerTick;
+        this.powerPointMonitorTimer.Start();
     }
 
     private void ExecuteAfterWindowCreated()
@@ -242,6 +249,26 @@ public partial class MainForm : Form
         this.CaptureAndDisplayScreen ();
     }
 
+    private void HandlePowerPointMonitorTimerTick(object? sender, EventArgs e)
+    {
+        const int maxLength = 256;
+        var windowTitle = new StringBuilder (maxLength);
+        IntPtr handle = Win32.GetForegroundWindow ();
+        _ = Win32.GetWindowText(handle, windowTitle, maxLength);
+
+        bool isPowerPointActive = windowTitle.ToString ().Contains ("PowerPoint");
+
+        if (isPowerPointActive && this.Visible)
+        {
+            this.Hide ();
+        }
+        else if (!isPowerPointActive && !this.Visible)
+        {
+            this.Show ();
+            //this.WindowState = FormWindowState.Normal;
+        }
+    }
+
     private void HandleHotkeyAction()
     {
         this.ToggleCapturing ();
@@ -261,11 +288,12 @@ public partial class MainForm : Form
         }
         base.WndProc (ref m);
     }
-
     protected override void OnFormClosing(FormClosingEventArgs e)
     {
         Win32.UnregisterHotKey (this.Handle, 1);
         SystemEvents.DisplaySettingsChanged -= this.HandleSystemEventsDisplaySettingsChanged;
+        this.powerPointMonitorTimer.Stop();
+        this.powerPointMonitorTimer.Dispose();
         base.OnFormClosing (e);
     }
 
@@ -308,6 +336,12 @@ public partial class MainForm : Form
 
         [DllImport ("user32.dll")]
         public static extern bool UnregisterHotKey(IntPtr hWnd, int id);
+
+        [DllImport ("user32.dll")]
+        public static extern IntPtr GetForegroundWindow();
+
+        [DllImport ("user32.dll")]
+        public static extern int GetWindowText(IntPtr hWnd, StringBuilder text, int count);
     }
 
     #endregion
@@ -324,4 +358,5 @@ public partial class MainForm : Form
     private readonly System.Windows.Forms.Timer captureTimer;
     private readonly NotifyIcon trayIcon;
     private readonly TaskbarOverlayManager taskbarManager;
+    private readonly System.Windows.Forms.Timer powerPointMonitorTimer;
 }
