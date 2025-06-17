@@ -8,4 +8,4 @@ Most of the source code was built with the help of a ChatGPT o3-mini session and
 
 ## Building the single file executable
 
-To build the single file executable, run `.\build.cmd`. At the end of the build, the script opens the `distrib` folder where you should find the `Sylnode.App.exe` file.
+To build the single file executable, run `.\build.bat`. At the end of the build, the script opens the `distrib` folder where you should find the `Sylnode.exe` file.
