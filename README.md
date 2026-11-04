@@ -10,6 +10,8 @@ Most of the source code was built with the help of a ChatGPT o3-mini session and
 
 Sylnode starts mirroring as soon as it is launched: the main screen is copied live to the second display.
 
+Sylnode needs the displays to be extended. When Windows duplicates them (<kbd>Win</kbd>+<kbd>P</kbd> › _Duplicate_), Sylnode switches to _Extend_ at startup, and back to _Duplicate_ when it quits.
+
 Press <kbd>Ctrl</kbd>+<kbd>§</kbd> to switch between the two states:
 
 - **Live**: the second display follows the main screen.

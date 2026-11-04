@@ -12,6 +12,7 @@ public partial class MainForm : Form
 {
     public MainForm()
     {
+        this.ExtendDuplicatedDisplays ();
         this.UpdateScreens ();
 
         this.taskbarManager = TaskbarOverlayManager.Instance;
@@ -49,6 +50,29 @@ public partial class MainForm : Form
         };
         this.powerPointMonitorTimer.Tick += this.HandlePowerPointMonitorTimerTick;
         this.powerPointMonitorTimer.Start();
+    }
+
+    /// <summary>
+    /// Switches from Duplicate to Extend: Sylnode needs a second screen of its
+    /// own, while Windows shows a single screen when the displays duplicate
+    /// each other. The topology is restored when Sylnode closes.
+    /// </summary>
+    private void ExtendDuplicatedDisplays()
+    {
+        if ((DisplayTopologyManager.GetCurrent () == DisplayTopology.Clone) &&
+            (DisplayTopologyManager.Apply (DisplayTopology.Extend)))
+        {
+            this.restoresDuplicatedDisplays = true;
+        }
+    }
+
+    private void RestoreDuplicatedDisplays()
+    {
+        if (this.restoresDuplicatedDisplays)
+        {
+            this.restoresDuplicatedDisplays = false;
+            DisplayTopologyManager.Apply (DisplayTopology.Clone);
+        }
     }
 
     private void ExecuteAfterWindowCreated()
@@ -294,6 +318,7 @@ public partial class MainForm : Form
         SystemEvents.DisplaySettingsChanged -= this.HandleSystemEventsDisplaySettingsChanged;
         this.powerPointMonitorTimer.Stop();
         this.powerPointMonitorTimer.Dispose();
+        this.RestoreDuplicatedDisplays ();
         base.OnFormClosing (e);
     }
 
@@ -349,6 +374,7 @@ public partial class MainForm : Form
     /*************************************************************************/
 
     private bool hasMutipleScreens;
+    private bool restoresDuplicatedDisplays;
     private Screen sourceScreen = default!;
     private Screen targetScreen = default!;
     private readonly Icon coffeeIcon;
